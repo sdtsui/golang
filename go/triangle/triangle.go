@@ -1,24 +1,56 @@
 package triangle
 
-const testVersion = 2
+import "math"
 
-// Code this function.
-func KindFromSides(a, b, c float64) Kind
+const (
+  testVersion = 2
+  NaT Kind = iota //use of iota
+  Equ
+  Iso
+  Sca
+)
+// can also do var NaT Kind = "not a triangle"
 
-// Notice it returns this type.  Pick something suitable.
-type Kind
+func KindFromSides(a, b, c float64) Kind {
+  sides := [6]float64{a, b, c, a, b, c}
+  if (!isTriangle(sides)) {
+    return Kind(NaT)
+  }
+  if (a == b && b == c && a == c) {
+    return Kind(Equ)
+  }
+  if (a == b || b == c || c == a) {
+    return Kind(Iso)
+  }
 
-// Pick values for the following identifiers used by the test program.
-NaT // not a triangle
-Equ // equilateral
-Iso // isosceles
-Sca // scalene
+  return Kind(Sca)
+}
 
-// Organize your code for readability.
+func isTriangle(sides [6]float64) bool { //short helper
+  for i := range sides[:3] {
+    if math.IsInf(sides[i], 0) || math.IsNaN(sides[i]) || sides[i] == 0 {
+      return false
+    }
+    sumOfLengths := sides[i] + sides[i+1]
+    if (sumOfLengths < sides[i+2]) {
+      return false
+    }
+  }
 
-// find number of sides, and side lengths
-// 
-// edge case: lines can't match?
-//  {NaT, 0, 0, 0},    // zero length
-  // {NaT, 3, 4, -5},   // negative length
-  // {NaT, 1, 1, 3},    // fails triangle inequality
+  return true
+}
+
+type Kind int
+
+/**
+ * 
+ * type Kind struct {
+  str string
+}
+
+var NaT Kind = Kind{str: "NaT"} // not a triangle
+var Equ Kind = Kind{str: "Equ"} // equilateral
+var Iso Kind = Kind{str: "Iso"} // isosceles
+var Sca Kind = Kind{str: "Sca"} // scalene
+
+ */

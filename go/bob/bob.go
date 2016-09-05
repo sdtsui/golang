@@ -2,34 +2,39 @@ package bob
 
 import (
   "strings"
+  "fmt"
 )
 
-const testVersion = 2
+const (
+  testVersion = 2
+  silenceReply = "Fine. Be that way!"
+  questionReply = "Sure."
+  shoutReply = "Whoa, chill out!"
+  defaultReply = "Whatever."
+)
+
 
 func Hey(s string) (response string) {
-  switch s = strings.TrimSpace(s); {
-  case silent(s):
-    response = "Fine. Be that way!"
-  case shouting(s):
-    response = "Whoa, chill out!"
-  case question(s):
-    response = "Sure."
-  default:
-    response = "Whatever."
+  s = strings.TrimSpace(s)
+
+  if (s == "") {
+    return silenceReply
   }
-  return
+
+  if (s == strings.ToUpper(s) && s != strings.ToLower(s)) {
+    return shoutReply
+  }
+
+  if (strings.HasSuffix(s, "?")) {
+    return questionReply
+  }
+
+  return defaultReply
 }
 
-func silent(s string) bool {
-  return s == ""
-}
-
-func question(s string) bool {
-  return strings.HasSuffix(s, "?")
-}
-
-func shouting(s string) bool {
-  return s == strings.ToUpper(s) && strings.ToUpper(s) != strings.ToLower(s)
-}
-// switch case, short functions
+// alternate: switch case, short functions
 // named return
+// 
+// question--ends  with a ?
+// silence--empty
+// caps--

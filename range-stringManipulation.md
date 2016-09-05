@@ -54,4 +54,3 @@ String Manipulation Notes, from Bob:
   func IsUpper(r rune) bool
   IsUpper reports whether the rune is an upper case letter.
 
-
