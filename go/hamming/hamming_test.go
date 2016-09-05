@@ -1,6 +1,7 @@
 package hamming
 
 import "testing"
+import "fmt"
 
 const targetTestVersion = 4
 
@@ -12,14 +13,17 @@ func TestHamming(t *testing.T) {
 		switch got, err := Distance(tc.s1, tc.s2); {
 		case err != nil:
 			var _ error = err
+			fmt.Println("Err1:", err)
 			if tc.want >= 0 {
-				t.Fatalf("Distance(%q, %q) returned error: %v",
-					tc.s1, tc.s2, err)
+				fmt.Println("Err1.1:", err)
+				t.Fatalf("Distance(%q, %q) returned error: %v", tc.s1, tc.s2, err)
 			}
 		case tc.want < 0:
+			fmt.Println("Err2:", err)
 			t.Fatalf("Distance(%q, %q) = %d.  Expected error.",
 				tc.s1, tc.s2, got)
 		case got != tc.want:
+			fmt.Println("Err3:", err)
 			t.Fatalf("Distance(%q, %q) = %d, want %d.",
 				tc.s1, tc.s2, got, tc.want)
 		}
