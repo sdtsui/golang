@@ -18,3 +18,10 @@ func Distance(a, b string) (int, error) {
 
   return distance, nil
 }
+
+//range keyword
+// for i := range a {
+//       if a[i] != b[i] {
+//         cnt++
+//       }
+//     }
