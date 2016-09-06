@@ -35,6 +35,15 @@ var Users = make([]User, 0)
 var usersCount = 1
 
 
+//NEXT:
+// Marshall slice, send JSON.
+// receive JSON
+// 
+// search a slice, return an element
+// 
+// delete from a slice
+// update an element in a slice
+
 func handler(w http.ResponseWriter, request *http.Request) {
   decoder := json.NewDecoder(request.Body)
   fmt.Println("Method:", request.Method)
