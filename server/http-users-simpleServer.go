@@ -7,42 +7,42 @@ import (
   "net/url"
 )
 
+//NEXT:
+// Marshall slice, send JSON.
+// receive JSON
+// search a slice, return an element
+// 
+// delete from a slice
+// update an element in a slice
 // http://www.alexedwards.net/blog/golang-response-snippets#json
 type User struct {
   Username string
   Password string
   Email string
 }
-
 type SavedUser struct {
   id int
   user User
 }
-
 var firstUser = User{
   Username: "Daniel",
   Password: "12345",
   Email: "daniel@blacklight.io",
 }
-
 var firstSavedUser = SavedUser{
   id: 0,
   user: firstUser,
 }
+// var Users = make([]User, 0)
+var Users []User
+var usersCount = 0
 
-var Users = make([]User, 0)
-
-var usersCount = 1
-
-
-//NEXT:
-// Marshall slice, send JSON.
-// receive JSON
-// 
-// search a slice, return an element
-// 
-// delete from a slice
-// update an element in a slice
+func init() {
+  fmt.Println("Initializing server...")
+  usersCount++
+  Users = append(Users, firstUser)
+  fmt.Println("Initial Users :", Users)
+}
 
 func handler(w http.ResponseWriter, request *http.Request) {
   decoder := json.NewDecoder(request.Body)
@@ -50,15 +50,14 @@ func handler(w http.ResponseWriter, request *http.Request) {
 
   if request.Method == "GET" { //TODO: write all users
     js, err := json.Marshal(Users)
-
     if err != nil {
       http.Error(w, err.Error(), http.StatusInternalServerError)
       return
     }
-
     w.Header().Set("Content-Type", "application/json")
     fmt.Println("SENDING JS: ", js)
     w.Write(js)
+
     return
   }
 
@@ -96,24 +95,9 @@ func handler(w http.ResponseWriter, request *http.Request) {
   // io.WriteString(w, "Hello world!")
 }
 
-
 func main() {
   mux := http.NewServeMux()
   mux.HandleFunc("/users", handler)
   fmt.Println("Listening...")
-
-
-  Users = append(Users, firstUser)
-  fmt.Println("FirstUsers:", firstUser, Users)
-
-  // fmt.Println("Current Users...", Users)
-
   http.ListenAndServe(":8000", mux)
 }
-
-// https://golang.org/pkg/net/http/#ServeMux
-//   mux := http.NewServeMux()
-//   mux.HandleFunc("/", hello)
-
-// a note on lowerCase key names:
-// http://stackoverflow.com/questions/11693865/lower-case-key-names-with-json-marshal-in-go
