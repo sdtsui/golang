@@ -7,15 +7,12 @@ import (
   "net/url"
 )
 
-
+// http://www.alexedwards.net/blog/golang-response-snippets#json
 type User struct {
   Username string
   Password string
   Email string
 }
-
-// http://www.alexedwards.net/blog/golang-response-snippets#json
-// type Users struct { }
 
 type SavedUser struct {
   id int
@@ -43,7 +40,17 @@ func handler(w http.ResponseWriter, request *http.Request) {
   fmt.Println("Method:", request.Method)
 
   if request.Method == "GET" { //TODO: write all users
+    js, err := json.Marshal(Users)
 
+    if err != nil {
+      http.Error(w, err.Error(), http.StatusInternalServerError)
+      return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    fmt.Println("SENDING JS: ", js)
+    w.Write(js)
+    return
   }
 
   if request.Method == "POST" { //TODO: create a new user, append
@@ -57,6 +64,8 @@ func handler(w http.ResponseWriter, request *http.Request) {
   if request.Method == "DELETE" { //TODO: remove a user from the slice
 
   }
+
+  fmt.Println("DZ____________________")
 
   u, err := url.Parse(request.RequestURI)
   if err != nil {
