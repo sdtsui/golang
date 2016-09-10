@@ -7,11 +7,8 @@ import (
   "strconv"
   "encoding/json"
   "net/url"
-  // "io"
 )
 
-// update an element in a slice
-// http://www.alexedwards.net/blog/golang-response-snippets#json
 type UserSchema struct {
   Username string
   Password string
@@ -57,7 +54,7 @@ func handler(w http.ResponseWriter, request *http.Request) {
 
   if request.Method == "GET" {
     var id = strings.Split(u.Path, "/")
-    if (len(id) < 3) { //doesn't have ID
+    if (len(id) < 3) { //No Id
       js, err := json.Marshal(Users)
       if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -66,9 +63,8 @@ func handler(w http.ResponseWriter, request *http.Request) {
       w.Header().Set("Content-Type", "application/json")
       w.WriteHeader(http.StatusOK)
       w.Write(js)
-
       return
-    } else if len(id) == 3 { //has ID
+    } else if len(id) == 3 {
       requestedId, convError := strconv.Atoi(id[2])
       if convError != nil {
         http.Error(w, convError.Error(), http.StatusInternalServerError)
@@ -76,7 +72,6 @@ func handler(w http.ResponseWriter, request *http.Request) {
       }
       for i := 0; i < len(Users); i++ {
         if (Users[i].Id == requestedId) {
-          //match
           js, err := json.Marshal(Users[i])
           if err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -89,18 +84,14 @@ func handler(w http.ResponseWriter, request *http.Request) {
         }
       }
 
-      //no match
       fmt.Println("ID ", requestedId, "Not Found")
       w.WriteHeader(http.StatusNotFound)
       return
     }
-
-
     return
   }
 
-  if request.Method == "POST" { //TODO: create a new user, append
-    // insert a new element
+  if request.Method == "POST" {
     decoder := json.NewDecoder(request.Body)
     var u UserSchema
     err = decoder.Decode(&u)
@@ -111,20 +102,21 @@ func handler(w http.ResponseWriter, request *http.Request) {
     usersCount++
     Users = append(Users, newUser)
     w.WriteHeader(http.StatusCreated)
-
     return
   }
 
-  if request.Method == "PATCH" {//TODO: update an existing user in the slice
-    // remove an element
+
+  // Alternative Implementation?
+  // http://stackoverflow.com/questions/18926303/iterate-through-a-struct-in-go
+  if request.Method == "PATCH" {
+    // http://www.alexedwards.net/blog/golang-response-snippets#json
     var id = strings.Split(u.Path, "/")
 
-    if (len(id) < 3) {
-      // no id: return invalid/404
+    if (len(id) < 3) { //No Id
       fmt.Println("Update without ID not implemented.")
       w.WriteHeader(http.StatusNotImplemented)
       return
-    } else if len(id) == 3 { //has ID
+    } else if len(id) == 3 {
       requestedId, convError := strconv.Atoi(id[2])
       if convError != nil {
         http.Error(w, convError.Error(), http.StatusInternalServerError)
@@ -155,32 +147,17 @@ func handler(w http.ResponseWriter, request *http.Request) {
       w.WriteHeader(http.StatusNotFound)
       return
     }
-
-
-    // Alternative Implementation: 
-    //   for _, d := range []interface{}{ firstUser.User.Username, firstUser.User.Password, firstUser.User.Email} {
-    //     fmt.Println("D", d)
-    //   }
-    // 
-    // iterate over all the possible values of a User
-      //  if the patch user has those values
-      //    replace them
-      //  if not, 
-      //    do nothing
-
     return
   }
 
-  if request.Method == "DELETE" { //TODO: remove a user from the slice
-    // remove an element
+  if request.Method == "DELETE" {
     var id = strings.Split(u.Path, "/")
 
-    if (len(id) < 3) {
-      // no id: return invalid/404
+    if (len(id) < 3) {//No Id
       fmt.Println("Delete without ID not implemented.")
       w.WriteHeader(http.StatusNotImplemented)
       return
-    } else if len(id) == 3 { //has ID
+    } else if len(id) == 3 {
       requestedId, convError := strconv.Atoi(id[2])
       if convError != nil {
         http.Error(w, convError.Error(), http.StatusInternalServerError)
@@ -188,29 +165,22 @@ func handler(w http.ResponseWriter, request *http.Request) {
       }
       for i := 0; i < len(Users); i++ {
         if (Users[i].Id == requestedId) {
-          //match
           js, err := json.Marshal(Users[i])
           if err != nil {
             http.Error(w, err.Error(), http.StatusInternalServerError)
             return
           }
-          // delete from array
           Users = append(Users[:i], Users[i+1:]...)
-
           fmt.Println("Successful Delete, ID:", requestedId)
-          // send the deleted element
           w.WriteHeader(http.StatusAccepted)
           w.Write(js)
           return
         }
       }
-
-      //no match
       fmt.Println("Delete Failed: ID ", requestedId, "Not Found")
       w.WriteHeader(http.StatusNotFound)
       return
     }
-
   }
 }
 
