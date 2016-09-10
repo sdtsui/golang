@@ -138,7 +138,7 @@ func handler(w http.ResponseWriter, request *http.Request) {
           if err != nil {
             panic(err)
           }
-          newUser := User{usersCount, u}
+          newUser := User{requestedId, u}
           // update array
           leftSide := append(Users[:i], newUser)
           Users = append(leftSide, Users[i+1:]...)
