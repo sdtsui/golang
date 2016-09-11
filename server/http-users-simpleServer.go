@@ -9,38 +9,38 @@ import (
   "net/url"
 )
 
-type UserSchema struct {
+type UserDetail struct {
   Username string
   Password string
   Email string
 }
 type User struct {
   Id int `json:"id"`
-  User UserSchema `json:"user"`
+  User UserDetail `json:"user"`
 }
-var firstUserSchema = UserSchema{
+var firstUserDetail = UserDetail{
   Username: "Daniel",
   Password: "12345",
   Email: "daniel@blacklight.io",
 }
-var secondUserSchema = UserSchema{
+var secondUserDetail = UserDetail{
   Username: "Daniel2",
-  Password: "54321",
+  Password: "67890",
   Email: "dan@blacklight.io",
 }
 var Users []User
 var usersCount = 0
 
+func addUser(count int, detail UserDetail) {
+  var newUser = User{count, detail}
+  Users = append(Users, newUser)
+  usersCount++
+}
+
 func init() {
   fmt.Println("Initializing server...")
-  var NewUser1 = User{usersCount, firstUserSchema}
-  Users = append(Users, NewUser1)
-  usersCount++
-
-  var NewUser2 = User{usersCount, secondUserSchema}
-  Users = append(Users, NewUser2)
-  usersCount++
-
+  addUser(usersCount, firstUserDetail)
+  addUser(usersCount, secondUserDetail)
   fmt.Println("Initial Users :", Users)
 }
 
@@ -49,9 +49,6 @@ func handler(w http.ResponseWriter, request *http.Request) {
   if err != nil {
       panic(err)
   }
-  fmt.Println("Host :", u.Host)
-  fmt.Println("Path :", u.Path)
-
   if request.Method == "GET" {
     var id = strings.Split(u.Path, "/")
     if (len(id) < 3) { //No Id
@@ -93,23 +90,18 @@ func handler(w http.ResponseWriter, request *http.Request) {
 
   if request.Method == "POST" {
     decoder := json.NewDecoder(request.Body)
-    var u UserSchema
+    var u UserDetail
     err = decoder.Decode(&u)
     if err != nil {
       panic(err)
     }
-    newUser := User{usersCount, u}
-    usersCount++
-    Users = append(Users, newUser)
+    addUser(usersCount, u)
     w.WriteHeader(http.StatusCreated)
     return
   }
 
 
-  // Alternative Implementation?
-  // http://stackoverflow.com/questions/18926303/iterate-through-a-struct-in-go
   if request.Method == "PATCH" {
-    // http://www.alexedwards.net/blog/golang-response-snippets#json
     var id = strings.Split(u.Path, "/")
 
     if (len(id) < 3) { //No Id
@@ -125,7 +117,7 @@ func handler(w http.ResponseWriter, request *http.Request) {
       for i := 0; i < len(Users); i++ {
         if (Users[i].Id == requestedId) {
           decoder := json.NewDecoder(request.Body)
-          var u UserSchema
+          var u UserDetail
           err = decoder.Decode(&u)
           if err != nil {
             panic(err)
