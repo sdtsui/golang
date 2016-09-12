@@ -1,11 +1,12 @@
 Projects/Endgame:
 
 Full-stack Project: 2-day.
-  - Use many DBs:
+  - Possible Dbs 
     - Cassandra
     - Redis
     - PostGres?
-OSS HELP WANTED:
+
+OSS Help Wanted:
   https://github.com/corylanou/oss-helpwanted
   https://github.com/influxdata/influxdb/issues/4098
   https://github.com/influxdata/kapacitor/labels/difficulty-easy
@@ -24,8 +25,6 @@ Backend Phone Screens:
     Must-Do:
     http://whipperstacker.com/2015/10/05/3-trivial-concurrency-exercises-for-the-confused-newbie-gopher/
     http://www.golangbootcamp.com/book/concurrency
-
-
 
 Challenges:
   https://github.com/door2door-io/backend-code-challenge
